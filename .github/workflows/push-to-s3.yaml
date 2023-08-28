@@ -1,0 +1,43 @@
+name: Publish application catalogue to S3
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'k8s/**'
+env:
+  AWS_S3_BUCKET: 'tfy-application-catalogue-test'
+jobs:
+  sync-catalogue-s3:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@master
+
+      - run: echo "🎉 The job was automatically triggered by a ${{ github.event_name }} event."
+      - run: echo "🐧 This job is now running on a ${{ runner.os }} server hosted by GitHub!"
+      - run: echo "🔎 The name of your branch is ${{ github.ref }} and your repository is ${{ github.repository }}."
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.APP_CATALOGUE_S3_ACCESS_KEY }}
+          aws-secret-access-key: ${{ secrets.APP_CATALOGUE_S3_SECRET_KEY }}
+          aws-region: 'eu-west-1' # optional: defaults to us-east-1
+
+      - name: Set up Python 3.10 (needed for cookiecutter cli)
+        uses: actions/setup-python@v1
+        with:
+          python-version: "3.10"
+      
+      - run: |
+          # Sync services to S3
+          aws s3 sync . s3://tfy-application-catalogue-test/ --delete
+          echo "Synced services successfully"
+      
+      - run: |
+          # Invalidate cloudfront
+          aws configure set preview.cloudfront true && aws cloudfront create-invalidation --distribution-id EYFSW3BXDVFP0 --paths '/*'
+
+
+      - run: echo "🍏 This job's status is ${{ job.status }}."
