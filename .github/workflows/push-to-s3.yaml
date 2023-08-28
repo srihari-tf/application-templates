@@ -32,7 +32,7 @@ jobs:
       
       - run: |
           # Sync services to S3
-          aws s3 sync . s3://tfy-application-catalogue-test/ --delete
+          aws s3 sync templates/ s3://tfy-application-catalogue-test/ --delete
           echo "Synced services successfully"
       
       - run: |
