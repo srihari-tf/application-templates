@@ -4,7 +4,7 @@ on:
     branches:
       - main
     paths:
-      - 'k8s/**'
+      - 'templates/**'
 env:
   AWS_S3_BUCKET: 'tfy-application-catalogue-test'
 jobs:
