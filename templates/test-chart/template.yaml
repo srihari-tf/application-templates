@@ -1,6 +1,6 @@
-apiVersion: v2
 name: test-chart
 version: 0.0.1
 description: "Test-chart"
-maintainers:
-  - name: srihari
+input_schema: values.schema.json
+manifests:
+  - manifests/person.yaml
